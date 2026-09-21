@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galeelio vs. Sintra — Competitive Positioning Narrative</title>
+
+<!-- Fonts: Space Grotesk (display/body) + JetBrains Mono (labels) — Neo-Grid Bold system -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ===========================================
+   CSS CUSTOM PROPERTIES — NEO-GRID BOLD THEME
+   =========================================== */
+:root {
+    --paper: #F5F4EF;
+    --bg: #ECECE8;
+    --ink: #0A0A0A;
+    --lemon: #E6FF3D;
+    --muted: #8A8A85;
+    --stage-bg: #1A1A1A;
+    --slide-bg: var(--bg);
+
+    --font-display: 'Space Grotesk', Helvetica Neue, Helvetica, Arial, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --dur: 0.6s;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--font-display); }
+
+/* ===========================================
+   FIXED 16:9 STAGE — MANDATORY BASE STYLES
+   =========================================== */
+html, body {
+    width: 100%; height: 100%; margin: 0; overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+.deck-viewport { position: fixed; inset: 0; overflow: hidden; background: var(--stage-bg, #000); }
+.deck-stage {
+    position: absolute; left: 0; top: 0; width: 1920px; height: 1080px;
+    overflow: hidden; transform-origin: 0 0; background: var(--slide-bg, #fff);
+}
+.slide {
+    position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+    display: block; visibility: hidden; opacity: 0; pointer-events: none;
+    background: var(--slide-bg, #fff);
+}
+.slide.active, .slide.visible { visibility: visible; opacity: 1; pointer-events: auto; z-index: 1; }
+img, video, canvas, svg { max-width: 100%; max-height: 100%; }
+.deck-controls { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 1000; }
+@media print {
+    html, body { width: 1920px; height: auto; overflow: visible; background: #fff; }
+    .deck-viewport { position: static; overflow: visible; background: #fff; }
+    .deck-stage { position: static; width: auto; height: auto; transform: none !important; background: none; }
+    .slide { position: relative; display: block !important; visibility: visible !important; opacity: 1 !important;
+        pointer-events: auto !important; width: 1920px; height: 1080px; break-after: page; page-break-after: always; }
+    .slide:last-child { break-after: auto; page-break-after: auto; }
+    .deck-controls { display: none !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+}
+
+/* ===========================================
+   NEO-GRID BOLD — STRUCTURAL FRAME
+   12-column x 8-row grid, 40px inset, 12px gap
+   =========================================== */
+.frame {
+    position: absolute; inset: 40px;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    gap: 12px;
+}
+.frame.gap-lg { gap: 18px; }
+
+.card { background: var(--paper); color: var(--ink); position: relative; overflow: hidden; }
+.card.ink { background: var(--ink); color: var(--paper); }
+.card.lemon { background: var(--lemon); color: var(--ink); }
+
+.pad-sm { padding: 24px 28px; }
+.pad-md { padding: 28px 32px; }
+.pad-lg { padding: 36px 32px; }
+.pad-xl { padding: 40px 44px; }
+
+.flex-col { display: flex; flex-direction: column; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+
+/* ===========================================
+   TYPE SCALE
+   =========================================== */
+.t-display     { font-family: var(--font-display); font-size: 132px; font-weight: 700; line-height: 1.05; letter-spacing: -0.02em; text-transform: uppercase; }
+.t-title       { font-family: var(--font-display); font-size: 88px;  font-weight: 700; line-height: 1.15; letter-spacing: -0.015em; text-transform: uppercase; }
+.t-title-md    { font-family: var(--font-display); font-size: 64px;  font-weight: 700; line-height: 1.2; letter-spacing: -0.012em; text-transform: uppercase; }
+.t-subtitle    { font-family: var(--font-display); font-size: 40px;  font-weight: 500; line-height: 1.25; letter-spacing: -0.005em; }
+.t-section-num { font-family: var(--font-display); font-size: 320px; font-weight: 700; line-height: .85; letter-spacing: -0.05em; }
+.t-stat        { font-family: var(--font-display); font-size: 156px; font-weight: 700; line-height: .9;  letter-spacing: -0.03em; }
+.t-stat-sm     { font-family: var(--font-display); font-size: 96px;  font-weight: 700; line-height: .9;  letter-spacing: -0.03em; }
+.t-card-headline { font-family: var(--font-display); font-size: 44px; font-weight: 700; line-height: 1;   letter-spacing: -0.01em; text-transform: uppercase; }
+.t-card-h3     { font-family: var(--font-display); font-size: 30px; font-weight: 700; line-height: 1.05; letter-spacing: -0.005em; text-transform: uppercase; }
+.t-body        { font-family: var(--font-display); font-size: 28px; font-weight: 400; line-height: 1.35; }
+.t-body-sm     { font-family: var(--font-display); font-size: 22px; font-weight: 400; line-height: 1.45; }
+.t-body-xs     { font-family: var(--font-display); font-size: 19px; font-weight: 400; line-height: 1.4; }
+.t-label       { font-family: var(--font-mono); font-size: 24px; font-weight: 400; letter-spacing: .08em; text-transform: uppercase; }
+.t-label-sm    { font-family: var(--font-mono); font-size: 16px; font-weight: 400; letter-spacing: .08em; text-transform: uppercase; }
+.t-label-xs    { font-family: var(--font-mono); font-size: 14px; font-weight: 400; letter-spacing: .12em; text-transform: uppercase; }
+
+mark { background: var(--lemon); color: var(--ink); padding: 0 6px; font-style: normal; }
+em   { color: var(--lemon); font-style: normal; }
+.mark-invert { background: var(--ink); color: var(--lemon); padding: 0 6px; font-style: normal; }
+.op-70 { opacity: .7; }
+.op-85 { opacity: .85; }
+
+/* ===========================================
+   CHROME: page number, corner mark, blockmark
+   =========================================== */
+.pagenum {
+    position: absolute; left: 0; bottom: 0; z-index: 5;
+    background: var(--paper); color: var(--ink);
+    padding: 14px 22px; font-family: var(--font-mono); font-size: 24px; letter-spacing: .04em;
+}
+.pagenum.invert { background: var(--ink); color: var(--paper); }
+.pagenum.lemon { background: var(--lemon); color: var(--ink); }
+
+.corner-mark {
+    position: absolute; top: 22px; right: 22px; z-index: 5;
+    width: 36px; height: 36px; display: grid;
+    grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 4px;
+}
+.corner-mark span { background: currentColor; }
+.corner-mark span:nth-child(2), .corner-mark span:nth-child(3) { background: transparent; }
+
+.blockmark {
+    width: 56px; height: 56px; display: grid;
+    grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 4px;
+}
+.blockmark span { background: currentColor; }
+.blockmark span:nth-child(2), .blockmark span:nth-child(3) { background: transparent; }
+.blockmark.lg { width: 96px; height: 96px; }
+
+/* ===========================================
+   COMPARISON TABLE (Chapter Four)
+   =========================================== */
+.cmp-table { display: flex; flex-direction: column; height: 100%; }
+.cmp-row { display: grid; grid-template-columns: 1.35fr 1fr 1fr; flex: 1; border-bottom: 1.5px solid var(--ink); min-height: 0; }
+.cmp-row:last-child { border-bottom: none; }
+.cmp-row.head { background: var(--ink); color: var(--paper); flex: 0 0 64px; }
+.cmp-cell { padding: 10px 24px; border-right: 1.5px solid var(--ink); display: flex; align-items: center; }
+.cmp-cell:last-child { border-right: none; }
+.cmp-row.head .cmp-cell { border-right: 1.5px solid rgba(245,244,239,.25); }
+.cmp-cell.dim-col { font-family: var(--font-mono); font-size: 15px; letter-spacing: .04em; text-transform: uppercase; opacity: .8; }
+
+/* ===========================================
+   PROCESS FLOW ARROW
+   =========================================== */
+.flow-arrow { width: 44px; height: 44px; flex: none; }
+.flow-row { display: flex; align-items: center; gap: 18px; }
+.flow-node {
+    background: var(--paper); color: var(--ink); border: 1.5px solid var(--ink);
+    padding: 16px 22px; font-family: var(--font-mono); font-size: 18px; letter-spacing: .06em; text-transform: uppercase;
+    flex: 1; text-align: center;
+}
+.flow-node.filled { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+/* ===========================================
+   REVEAL ANIMATIONS
+   =========================================== */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity var(--dur) var(--ease-out-expo), transform var(--dur) var(--ease-out-expo); }
+.slide.visible .reveal { opacity: 1; transform: translateY(0); }
+.d1 { transition-delay: .05s; } .d2 { transition-delay: .12s; } .d3 { transition-delay: .19s; }
+.d4 { transition-delay: .26s; } .d5 { transition-delay: .33s; } .d6 { transition-delay: .40s; }
+.d7 { transition-delay: .47s; } .d8 { transition-delay: .54s; }
+
+/* ===========================================
+   DECK CONTROLS (outside stage)
+   =========================================== */
+.deck-controls { display: flex; align-items: center; gap: 18px; font-family: var(--font-mono); }
+.deck-controls button {
+    width: 44px; height: 44px; border-radius: 0; border: 1.5px solid var(--paper);
+    background: transparent; color: var(--paper); font-family: var(--font-mono); font-size: 18px;
+    cursor: pointer; transition: background .2s, color .2s;
+}
+.deck-controls button:hover { background: var(--lemon); color: var(--ink); border-color: var(--lemon); }
+.deck-counter { color: var(--paper); font-size: 15px; letter-spacing: .08em; min-width: 64px; text-align: center; }
+
+/* ===========================================
+   EDIT MODE
+   =========================================== */
+.edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+.edit-toggle {
+    position: fixed; top: 18px; left: 18px; z-index: 10001; width: 44px; height: 44px;
+    border: 1.5px solid var(--lemon); background: var(--ink); color: var(--lemon); font-size: 18px;
+    opacity: 0; pointer-events: none; transition: opacity .3s ease; cursor: pointer;
+}
+.edit-toggle.show, .edit-toggle.active { opacity: 1; pointer-events: auto; }
+.editable[contenteditable="true"] { outline: 1.5px dashed var(--lemon); outline-offset: 4px; cursor: text; }
+</style>
+</head>
+<body>
+<div class="deck-viewport">
+<main class="deck-stage" id="deckStage">
+
+<!-- =========================================================
+     SLIDE 01 — COVER
+     ========================================================= -->
+<section class="slide active" data-title="Cover">
+    <div class="frame">
+        <div class="card ink pad-xl flex-col justify-between reveal d1" style="grid-column:1/13; grid-row:1/6;">
+            <div class="t-label editable" style="color:var(--lemon); opacity:.9;">Competitive Positioning Narrative</div>
+            <div>
+                <h1 class="t-display editable" style="margin-top:18px;">Galeelio <em>vs.</em> Sintra</h1>
+            </div>
+            <div class="corner-mark" style="color:var(--lemon);"><span></span><span></span><span></span><span></span></div>
+        </div>
+        <div class="card paper pad-xl flex-col justify-center reveal d2" style="grid-column:1/13; grid-row:6/9;">
+            <p class="t-subtitle editable">The story of two AI workforces, and how <mark>Galeelio</mark> owns what Sintra left behind.</p>
+        </div>
+    </div>
+    <div class="pagenum invert">01 / 17</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 02 — CHAPTER DIVIDER 1
+     ========================================================= -->
+<section class="slide" data-title="Chapter One Divider">
+    <div class="frame">
+        <div class="card lemon pad-xl flex-col justify-between reveal d1" style="grid-column:1/5; grid-row:1/9;">
+            <div class="t-label" style="opacity:.8;">Chapter</div>
+            <div class="t-section-num">01</div>
+        </div>
+        <div class="card ink pad-xl flex-col justify-center reveal d2" style="grid-column:5/13; grid-row:1/9;">
+            <div class="t-label op-70" style="margin-bottom:20px;">Setting the scene</div>
+            <h2 class="t-display editable">The Category<br>Sintra Built</h2>
+        </div>
+    </div>
+    <div class="pagenum lemon">02 / 17</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 03 — SINTRA ORIGIN
+     ========================================================= -->
+<section class="slide" data-title="Sintra Origin">
+    <div class="frame">
+        <div class="card paper pad-xl flex-col justify-between reveal d1" style="grid-column:1/8; grid-row:1/9;">
+            <div>
+                <div class="t-label op-70">01 — Origins</div>
+                <h2 class="t-title editable" style="margin-top:22px;">Sell a team, not a <mark>chatbot</mark></h2>
+            </div>
+            <p class="t-body editable" style="max-width:90%;">In 2023, a small team in Vilnius, Lithuania set out to solve a real problem: small business owners drowning in work they couldn't afford to hire for. Their answer was simple — twelve named AI employees, each with a job title and a personality.</p>
+        </div>
+        <div class="card ink pad-lg flex-col reveal d2" style="grid-column:8/13; grid-row:1/9;">
+            <div class="t-label" style="color:var(--lemon); margin-bottom:26px;">The Roster</div>
+            <div class="t-card-headline editable" style="margin-bottom:6px;">Soshie</div>
+            <div class="t-label-sm op-70" style="margin-bottom:24px;">Social media</div>
+            <div class="t-card-headline editable" style="margin-bottom:6px;">Cassie</div>
+            <div class="t-label-sm op-70" style="margin-bottom:24px;">Customer support</div>
+            <div class="t-card-headline editable" style="margin-bottom:6px;">Dexter</div>
+            <div class="t-label-sm op-70" style="margin-bottom:24px;">Data</div>
+            <div class="t-card-headline editable" style="margin-bottom:6px;">Milli</div>
+            <div class="t-label-sm op-70">Sales</div>
+        </div>
+    </div>
+    <div class="pagenum">03 / 17</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 04 — SINTRA BY THE NUMBERS
+     ========================================================= -->
+<section class="slide" data-title="Sintra By The Numbers">
+    <div class="frame">
+        <div class="card paper pad-md flex-col justify-between reveal d1" style="grid-column:1/4; grid-row:1/5;">
+            <div class="t-label op-70">Customers</div>
+            <div class="t-stat-sm editable">40K+</div>
+            <div class="t-body-sm editable">business owners</div>
+        </div>
+        <div class="card paper pad-md flex-col justify-between reveal d2" style="grid-column:4/7; grid-row:1/5;">
+            <div class="t-label op-70">Reach</div>
+            <div class="t-stat-sm editable">100+</div>
+            <div class="t-body-sm editable">countries</div>
+        </div>
+        <div class="card lemon pad-md flex-col justify-between reveal d3" style="grid-column:7/10; grid-row:1/5;">
+            <div class="t-label" style="opacity:.75;">Usage</div>
+            <div class="t-stat-sm editable">100M+</div>
+            <div class="t-body-sm editable">prompts / year</div>
+        </div>
+        <div class="card paper pad-md flex-col justify-between reveal d4" style="grid-column:10/13; grid-row:1/5;">
+            <div class="t-label op-70">Scale</div>
+            <div class="t-stat-sm editable">600K+</div>
+            <div class="t-body-sm editable">accounts managed</div>
+        </div>
+        <div class="card ink pad-xl flex-col justify-center reveal d5" style="grid-column:1/13; grid-row:5/9;">
+            <div class="t-label" style="color:var(--lemon); margin-bottom:18px;">The Honest Read</div>
+            <p class="t-subtitle editable" style="max-width:85%;">Sintra didn't win by accident. It made an abstract technology feel like something a non-technical business owner could hire, trust, and talk to by name.</p>
+        </div>
+    </div>
+    <div class="pagenum">04 / 17</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 05 — CHAPTER DIVIDER 2
+     ========================================================= -->
+<section class="slide" data-title="Chapter Two Divider">
+    <div class="frame">
+        <div class="card ink pad-xl flex-col justify-center reveal d1" style="grid-column:1/9; grid-row:1/9;">
+            <div class="t-label op-70" style="margin-bottom:20px;">The other side of the story</div>
+            <h2 class="t-display editable">The Crack in<br>the Foundation</h2>
+        </div>
+        <div class="card lemon pad-xl flex-col justify-between reveal d2" style="grid-column:9/13; grid-row:1/9;">
+            <div class="t-label" style="opacity:.8;">Chapter</div>
+            <div class="t-section-num" style="font-size:220px;">02</div>
+        </div>
+    </div>
+    <div class="pagenum invert">05 / 17</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 06 — NOT A TEAM
+     ========================================================= -->
+<section class="slide" data-title="Not A Team">
+    <div class="frame">
+        <div class="card ink pad-xl flex-col justify-center reveal d1" style="grid-column:1/13; grid-row:1/4;">
+            <p class="t-title-md editable" style="text-align:center;">Twelve employees who don't talk to each other <mark>isn't a team</mark>.</p>
+        </div>
+        <div class="card paper pad-lg flex-col justify-center reveal d2" style="grid-column:1/7; grid-row:4/9;">
+            <div class="t-label op-70" style="margin-bottom:18px;">The complaint</div>
+            <p class="t-body editable">Independent reviews converge on the same issue, again and again: the helpers don't share context. A business owner has to manually carry information from one AI employee's chat window to the next.</p>
+        </div>
+        <div class="card paper pad-lg flex-col justify-center reveal d3" style="grid-column:7/13; grid-row:4/9;">
+            <div class="t-label op-70" style="margin-bottom:18px;">In practice</div>
+            <p class="t-body editable">Cassie can't hand a qualified lead to Milli. Dexter's analysis doesn't automatically inform Penn's next piece of copy. Every "employee" works in its own silo.</p>
+        </div>
+    </div>
+    <div class="pagenum">06 / 17</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 07 — MORE CRACKS
+     ========================================================= -->
+<section class="slide" data-title="More Cracks">
+    <div class="frame">
+        <div class="card paper pad-md flex-col justify-between reveal d1" style="grid-column:1/7; grid-row:1/4;">
+            <div class="t-card-h3 editable">Shallow automation</div>
+            <p class="t-body-sm editable">Falls short of tools like Zapier — no complex workflows or conditional triggers.</p>
+        </div>
+        <div class="card paper pad-md flex-col justify-between reveal d2" style="grid-column:7/13; grid-row:1/4;">
+            <div class="t-card-h3 editable">A fixed roster</div>
+            <p class="t-body-sm editable">Little ability to customize the twelve helpers, or build one of your own.</p>
+        </div>
+        <div class="card paper pad-md flex-col justify-between reveal d3" style="grid-column:1/7; grid-row:4/7;">
+            <div class="t-card-h3 editable">Pricing that climbs</div>
+            <p class="t-body-sm editable">No true free plan — a buyer has to commit financially before testing it properly.</p>
+        </div>
+        <div class="card paper pad-md flex-col justify-between reveal d4" style="grid-column:7/13; grid-row:4/7;">
+            <div class="t-card-h3 editable">One buyer only</div>
+            <p class="t-body-sm editable">Built for the solopreneur — no real governance, permissions, or compliance story for mid-sized teams.</p>
+        </div>
+        <div class="card lemon pad-lg flex-col justify-center reveal d5" style="grid-column:1/13; grid-row:7/9;">
+            <p class="t-body editable">None of this makes Sintra a bad product. It makes it a product with a shape — built for one kind of customer, doing one kind of job well.</p>
+        </div>
+    </div>
+    <div class="pagenum lemon">07 / 17</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 08 — CHAPTER DIVIDER 3
+     ========================================================= -->
+<section class="slide" data-title="Chapter Three Divider">
+    <div class="frame">
+        <div class="card lemon pad-xl flex-col justify-between reveal d1" style="grid-column:1/5; grid-row:1/9;">
+            <div class="t-label" style="opacity:.8;">Chapter</div>
+            <div class="t-section-num">03</div>
+        </div>
+        <div class="card ink pad-xl flex-col justify-center reveal d2" style="grid-column:5/13; grid-row:1/9;">
+            <div class="t-label op-70" style="margin-bottom:20px;">The opposite assumption</div>
+            <h2 class="t-display editable">Why Galeelio<br>Exists</h2>
+        </div>
+    </div>
+    <div class="pagenum lemon">08 / 17</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 09 — SQUAD, NOT ROSTER
+     ========================================================= -->
+<section class="slide" data-title="Squad Not Roster">
+    <div class="frame">
+        <div class="card ink pad-xl flex-col justify-center reveal d1" style="grid-column:1/13; grid-row:1/4;">
+            <p class="t-title-md editable" style="text-align:center;">An AI workforce should behave like a real team, <mark>not a directory</mark> of specialists.</p>
+        </div>
+        <div class="card paper pad-lg flex-col justify-center reveal d2" style="grid-column:1/7; grid-row:4/9;">
+            <div class="t-label op-70" style="margin-bottom:18px;">The mechanism</div>
+            <p class="t-body editable">Where Sintra sells twelve employees and leaves coordination to you, Galeelio sells a squad — agents pre-configured for a specific job, wired together so one agent's output becomes the next agent's input. No copying between windows.</p>
+        </div>
+        <div class="card paper pad-lg flex-col justify-center reveal d3" style="grid-column:7/13; grid-row:4/9;">
+            <div class="t-label op-70" style="margin-bottom:24px;">The handoff, in practice</div>
+            <div class="flex-col" style="gap:14px;">
+                <div class="flow-row">
+                    <div class="flow-node">Lead comes in</div>
+                    <svg class="flow-arrow" viewBox="0 0 24 24" fill="none"><path d="M4 12h15M13 6l6 6-6 6" stroke="var(--ink)" stroke-width="2" stroke-linecap="square"/></svg>
+                    <div class="flow-node">Agent qualifies</div>
+                </div>
+                <div class="flow-row">
+                    <div class="flow-node filled">Auto handoff</div>
+                    <svg class="flow-arrow" viewBox="0 0 24 24" fill="none"><path d="M4 12h15M13 6l6 6-6 6" stroke="var(--lemon)" stroke-width="2" stroke-linecap="square"/></svg>
+                    <div class="flow-node filled">Agent follows up</div>
+                </div>
+            </div>
+            <p class="t-body-xs editable" style="margin-top:22px; opacity:.75;">The business owner sees the outcome, not the handoff.</p>
+        </div>
+    </div>
+    <div class="pagenum">09 / 17</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 10 — POSITIONING CALLOUT 1
+     ========================================================= -->
+<section class="slide" data-title="Positioning Statement">
+    <div class="frame">
+        <div class="card lemon pad-xl flex-col justify-center reveal d1" style="grid-column:1/13; grid-row:1/9;">
+            <div class="t-label" style="opacity:.75; margin-bottom:26px;">The positioning, in one line</div>
+            <p class="t-display editable" style="font-size:96px;">Sintra gives you a list of AI employees.<br><span class="mark-invert">Galeelio gives you a team that actually works like one.</span></p>
+        </div>
+    </div>
+    <div class="pagenum invert">10 / 17</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 11 — CHAPTER DIVIDER 4
+     ========================================================= -->
+<section class="slide" data-title="Chapter Four Divider">
+    <div class="frame">
+        <div class="card ink pad-xl flex-col justify-center reveal d1" style="grid-column:1/9; grid-row:1/9;">
+            <div class="t-label op-70" style="margin-bottom:20px;">Removing the marketing language</div>
+            <h2 class="t-display editable">Standing Them<br>Side by Side</h2>
+        </div>
+        <div class="card lemon pad-xl flex-col justify-between reveal d2" style="grid-column:9/13; grid-row:1/9;">
+            <div class="t-label" style="opacity:.8;">Chapter</div>
+            <div class="t-section-num" style="font-size:220px;">04</div>
+        </div>
+    </div>
+    <div class="pagenum invert">11 / 17</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 12 — COMPARISON TABLE
+     ========================================================= -->
+<section class="slide" data-title="Comparison Table">
+    <div class="frame gap-lg">
+        <div class="card paper reveal d1" style="grid-column:1/13; grid-row:1/9; overflow:hidden;">
+            <div class="cmp-table">
+                <div class="cmp-row head">
+                    <div class="cmp-cell t-label-xs">Dimension</div>
+                    <div class="cmp-cell t-label-xs">Sintra</div>
+                    <div class="cmp-cell t-label-xs">Galeelio</div>
+                </div>
+                <div class="cmp-row">
+                    <div class="cmp-cell dim-col editable">Category framing</div>
+                    <div class="cmp-cell t-body-xs editable">Fixed cast of 12 generic AI personas for solopreneurs</div>
+                    <div class="cmp-cell t-body-xs editable">Pre-configured, industry-specific squads built for a named job</div>
+                </div>
+                <div class="cmp-row">
+                    <div class="cmp-cell dim-col editable">Agent collaboration</div>
+                    <div class="cmp-cell t-body-xs editable">Helpers work in silos; work is moved between them manually</div>
+                    <div class="cmp-cell t-body-xs editable">Agents share context and hand off work automatically</div>
+                </div>
+                <div class="cmp-row">
+                    <div class="cmp-cell dim-col editable">Customization</div>
+                    <div class="cmp-cell t-body-xs editable">Little ability to customize or create your own helpers</div>
+                    <div class="cmp-cell t-body-xs editable">Squads reshaped and extended around the real workflow</div>
+                </div>
+                <div class="cmp-row">
+                    <div class="cmp-cell dim-col editable">Automation depth</div>
+                    <div class="cmp-cell t-body-xs editable">Limited to simple tasks; no complex workflows or triggers</div>
+                    <div class="cmp-cell t-body-xs editable">Multi-step workflow logic built for real handoffs</div>
+                </div>
+                <div class="cmp-row">
+                    <div class="cmp-cell dim-col editable">Pricing model</div>
+                    <div class="cmp-cell t-body-xs editable">Fixed tiers, no true free plan, cost climbs fast for teams</div>
+                    <div class="cmp-cell t-body-xs editable">Transparent, usage-based pricing with a low-friction trial</div>
+                </div>
+                <div class="cmp-row">
+                    <div class="cmp-cell dim-col editable">Enterprise readiness</div>
+                    <div class="cmp-cell t-body-xs editable">Built for solopreneurs; governance is not the focus</div>
+                    <div class="cmp-cell t-body-xs editable">Data residency, audit logging, and permissions as core</div>
+                </div>
+                <div class="cmp-row">
+                    <div class="cmp-cell dim-col editable">Primary buyer</div>
+                    <div class="cmp-cell t-body-xs editable">The individual solo founder or small business owner</div>
+                    <div class="cmp-cell t-body-xs editable">Small and mid-sized teams, one industry at a time</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="pagenum">12 / 17</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 13 — THE PATTERN
+     ========================================================= -->
+<section class="slide" data-title="The Pattern">
+    <div class="frame">
+        <div class="card ink pad-xl flex-col justify-center reveal d1" style="grid-column:1/7; grid-row:1/9;">
+            <div class="t-label" style="color:var(--lemon); margin-bottom:22px;">The pattern, across every row</div>
+            <p class="t-title-md editable">Sintra optimized for approachability and speed to a first <mark>"wow"</mark> moment.</p>
+        </div>
+        <div class="card paper pad-xl flex-col justify-center reveal d2" style="grid-column:7/13; grid-row:1/9;">
+            <p class="t-title-md editable" style="color:var(--ink);">Galeelio is built to be the platform a business <em style="color:var(--ink); background:var(--lemon); padding:0 6px;">grows into</em> — without hitting the wall Sintra's own customers describe once needs get past simple, single-step tasks.</p>
+        </div>
+    </div>
+    <div class="pagenum invert">13 / 17</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 14 — CHAPTER DIVIDER 5
+     ========================================================= -->
+<section class="slide" data-title="Chapter Five Divider">
+    <div class="frame">
+        <div class="card lemon pad-xl flex-col justify-between reveal d1" style="grid-column:1/5; grid-row:1/9;">
+            <div class="t-label" style="opacity:.8;">Chapter</div>
+            <div class="t-section-num">05</div>
+        </div>
+        <div class="card ink pad-xl flex-col justify-center reveal d2" style="grid-column:5/13; grid-row:1/9;">
+            <div class="t-label op-70" style="margin-bottom:20px;">Beyond the feature comparison</div>
+            <h2 class="t-display editable" style="font-size:100px;">How Galeelio Wins the Space</h2>
+        </div>
+    </div>
+    <div class="pagenum lemon">14 / 17</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 15 — THREE MOVES
+     ========================================================= -->
+<section class="slide" data-title="Three Moves">
+    <div class="frame">
+        <div class="card ink pad-lg flex-col justify-between reveal d1" style="grid-column:1/5; grid-row:1/9;">
+            <div class="t-stat-sm" style="color:var(--lemon); font-size:72px;">01</div>
+            <div>
+                <div class="t-card-headline editable" style="margin-bottom:14px;">Pick a fight you can win</div>
+                <p class="t-body-sm editable" style="opacity:.85;">Own one vertical completely — the obvious, specific answer for one kind of business, in one market — before expanding outward.</p>
+            </div>
+        </div>
+        <div class="card paper pad-lg flex-col justify-between reveal d2" style="grid-column:5/9; grid-row:1/9;">
+            <div class="t-stat-sm" style="font-size:72px; opacity:.85;">02</div>
+            <div>
+                <div class="t-card-headline editable" style="margin-bottom:14px;">Make it undeniable, not claimed</div>
+                <p class="t-body-sm editable">The cross-agent handoff has to be demonstrable in thirty seconds, live, in front of a buyer who has likely tried Sintra already.</p>
+            </div>
+        </div>
+        <div class="card lemon pad-lg flex-col justify-between reveal d3" style="grid-column:9/13; grid-row:1/9;">
+            <div class="t-stat-sm" style="font-size:72px; opacity:.75;">03</div>
+            <div>
+                <div class="t-card-headline editable" style="margin-bottom:14px;">Build trust Sintra never had to build twice</div>
+                <p class="t-body-sm editable">Governance, data handling, and honest, provable claims are the reason a considered buyer chooses the newer, smaller platform.</p>
+            </div>
+        </div>
+    </div>
+    <div class="pagenum">15 / 17</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 16 — POSITIONING CALLOUT 2
+     ========================================================= -->
+<section class="slide" data-title="The Story We Tell">
+    <div class="frame">
+        <div class="card ink pad-xl flex-col justify-center reveal d1" style="grid-column:1/13; grid-row:1/9;">
+            <div class="t-label" style="color:var(--lemon); margin-bottom:26px;">The story we tell the market</div>
+            <p class="t-title editable" style="max-width:92%;">Sintra proved businesses want an AI team. Galeelio is the version built for teams that actually need to get <mark>real work done together</mark> — not just talk to twelve assistants one at a time.</p>
+        </div>
+    </div>
+    <div class="pagenum invert">16 / 17</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 17 — CLOSING
+     ========================================================= -->
+<section class="slide" data-title="Closing">
+    <div class="frame">
+        <div class="card ink pad-xl flex-col justify-center reveal d1" style="grid-column:1/13; grid-row:1/6;">
+            <h2 class="t-title editable">The AI workforce category isn't fully owned yet. It will belong to whoever first makes a <mark>connected AI team</mark> feel true — not just described.</h2>
+        </div>
+        <div class="card paper pad-lg flex-col justify-center reveal d2" style="grid-column:1/9; grid-row:6/9;">
+            <p class="t-body editable">Galeelio can take that space — deliberately, one vertical and one proof point at a time — starting from honesty about what's built today, not what's promised for tomorrow.</p>
+        </div>
+        <div class="card lemon pad-lg flex-col justify-center reveal d3" style="grid-column:9/13; grid-row:6/9;">
+            <div class="t-card-headline editable">Thank you</div>
+            <div class="t-label-sm" style="opacity:.75; margin-top:10px;">Internal strategy use — Sept 2026</div>
+        </div>
+    </div>
+    <div class="pagenum invert">17 / 17</div>
+</section>
+
+</main>
+</div>
+
+<div class="edit-hotzone" id="editHotzone"></div>
+<button class="edit-toggle" id="editToggle" title="Edit mode (E)">&#9998;</button>
+
+<div class="deck-controls">
+    <button id="prevBtn" aria-label="Previous slide">&#8592;</button>
+    <div class="deck-counter" id="deckCounter">01 / 17</div>
+    <button id="nextBtn" aria-label="Next slide">&#8594;</button>
+</div>
+
+<script>
+/* ===========================================
+   SLIDE PRESENTATION CONTROLLER
+   =========================================== */
+class SlidePresentation {
+    constructor() {
+        this.slides = Array.from(document.querySelectorAll('.slide'));
+        this.currentSlide = 0;
+        this.stage = document.getElementById('deckStage');
+        this.counter = document.getElementById('deckCounter');
+        this.setupStageScale();
+        this.setupKeyboardNav();
+        this.setupTouchNav();
+        this.setupWheelNav();
+        this.setupButtons();
+        this.showSlide(0);
+    }
+
+    setupStageScale() {
+        const scale = () => {
+            const factor = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+            const x = (window.innerWidth - 1920 * factor) / 2;
+            const y = (window.innerHeight - 1080 * factor) / 2;
+            this.stage.style.transform = `translate(${x}px, ${y}px) scale(${factor})`;
+        };
+        scale();
+        window.addEventListener('resize', scale);
+    }
+
+    setupKeyboardNav() {
+        document.addEventListener('keydown', (e) => {
+            if (e.target.getAttribute && e.target.getAttribute('contenteditable') === 'true') return;
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); this.next(); }
+            if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); this.prev(); }
+        });
+    }
+
+    setupTouchNav() {
+        let startX = 0;
+        this.stage.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, { passive: true });
+        this.stage.addEventListener('touchend', (e) => {
+            const dx = e.changedTouches[0].clientX - startX;
+            if (Math.abs(dx) > 60) { dx < 0 ? this.next() : this.prev(); }
+        }, { passive: true });
+    }
+
+    setupWheelNav() {
+        let locked = false;
+        window.addEventListener('wheel', (e) => {
+            if (locked) return;
+            if (Math.abs(e.deltaY) < 24) return;
+            locked = true;
+            e.deltaY > 0 ? this.next() : this.prev();
+            setTimeout(() => { locked = false; }, 500);
+        }, { passive: true });
+    }
+
+    setupButtons() {
+        document.getElementById('nextBtn').addEventListener('click', () => this.next());
+        document.getElementById('prevBtn').addEventListener('click', () => this.prev());
+    }
+
+    next() { this.showSlide(this.currentSlide + 1); }
+    prev() { this.showSlide(this.currentSlide - 1); }
+
+    showSlide(index) {
+        this.currentSlide = Math.max(0, Math.min(index, this.slides.length - 1));
+        this.slides.forEach((slide, i) => {
+            slide.classList.toggle('active', i === this.currentSlide);
+            slide.classList.toggle('visible', i === this.currentSlide);
+        });
+        const n = this.currentSlide + 1;
+        this.counter.textContent = (n < 10 ? '0' + n : n) + ' / ' + this.slides.length;
+    }
+}
+
+/* ===========================================
+   INLINE EDITING (default post-draft affordance)
+   =========================================== */
+class InlineEditor {
+    constructor() {
+        this.isActive = false;
+        this.storageKey = 'galeelio-vs-sintra-deck-v1';
+        this.editables = Array.from(document.querySelectorAll('.editable'));
+        this.editables.forEach((el, i) => { if (!el.dataset.editId) el.dataset.editId = 'el-' + i; });
+        this.restore();
+        this.bind();
+    }
+
+    bind() {
+        const toggle = document.getElementById('editToggle');
+        const hotzone = document.getElementById('editHotzone');
+        let hideTimeout = null;
+
+        toggle.addEventListener('click', () => this.toggleEditMode());
+        hotzone.addEventListener('click', () => this.toggleEditMode());
+
+        hotzone.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); toggle.classList.add('show'); });
+        hotzone.addEventListener('mouseleave', () => {
+            hideTimeout = setTimeout(() => { if (!this.isActive) toggle.classList.remove('show'); }, 400);
+        });
+        toggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+        toggle.addEventListener('mouseleave', () => {
+            hideTimeout = setTimeout(() => { if (!this.isActive) toggle.classList.remove('show'); }, 400);
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.key === 'e' || e.key === 'E') && !(e.target.getAttribute && e.target.getAttribute('contenteditable') === 'true')) {
+                this.toggleEditMode();
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                this.save();
+            }
+        });
+    }
+
+    toggleEditMode() {
+        this.isActive = !this.isActive;
+        document.getElementById('editToggle').classList.toggle('active', this.isActive);
+        this.editables.forEach(el => el.setAttribute('contenteditable', this.isActive ? 'true' : 'false'));
+        if (!this.isActive) this.save();
+    }
+
+    save() {
+        try {
+            const data = {};
+            this.editables.forEach(el => { data[el.dataset.editId] = el.innerHTML; });
+            localStorage.setItem(this.storageKey, JSON.stringify(data));
+        } catch (e) { /* localStorage unavailable — edits stay in-memory only */ }
+    }
+
+    restore() {
+        try {
+            const raw = localStorage.getItem(this.storageKey);
+            if (!raw) return;
+            const data = JSON.parse(raw);
+            this.editables.forEach(el => { if (data[el.dataset.editId] != null) el.innerHTML = data[el.dataset.editId]; });
+        } catch (e) { /* ignore corrupted or blocked storage */ }
+    }
+}
+
+new SlidePresentation();
+new InlineEditor();
+</script>
+</body>
+</html>
